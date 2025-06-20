@@ -2,6 +2,10 @@ For similicity we create an image with a single layer.
 
 We create 3 images with 3 tags and we move the `latest` tag around the 3 images
 
+## Setup
+
+Login on the remote registry, build an push the three images.
+
 ```
 $ podman login quay.io
 ```
@@ -95,6 +99,10 @@ sha256:1e3db69c86ebade790816eaeab6ea6e14c41e74cabd19b5fc4fa886f99c77cc1
 ]
 ```
 
+## Test 1
+
+We tag the `v1` as `latest`, we start a deployment pointing to the `latest` tag.
+
 Let's tag the `v1` as `latest`
 
 ```
@@ -167,7 +175,13 @@ $ oc debug node/ip-10-0-0-191.us-east-2.compute.internal -- chroot /host crictl 
 ]
 ```
 
-Now let's tag the `v2` as `latest` and remove the `v1`
+**SUCCESS:** The pod is started with the correct image
+
+## Test 2
+
+The tag `latest` is moved to `v2`, `v1` is not deleted from the registry
+
+Now let's tag the `v2` as `latest`
 
 ```
 $ podman tag quay.io/pbertera/pull-test:v2 quay.io/pbertera/pull-test:latest
@@ -230,7 +244,11 @@ $ oc debug node/ip-10-0-0-191.us-east-2.compute.internal -- chroot /host crictl 
 ]
 ```
 
-The pod is restarted and the image is updated
+**SUCCESS:** The pod is restarted and the image is updated, the `latest` tag is properly resolved
+
+## Test 3
+
+The tag `latest` is moved to `v3`, `v1` and `v2` are deleted from the registry
 
 Lets tag the `v3` as `latest` and push it:
 
@@ -368,4 +386,4 @@ $ oc debug node/ip-10-0-0-191.us-east-2.compute.internal -- chroot /host crictl 
 ]
 ```
 
-The image is properly updated
+**SUCCESS:** The pod is restarted and the image is updated, the `latest` tag is properly resolved
